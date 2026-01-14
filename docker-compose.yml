@@ -9,7 +9,10 @@ services:
   nginx:
     # On garde le build pour installer la lib JWT, 
     # mais l'image ne contiendra plus la config en dur.
-    build: ./nginx/
+    build: 
+      context: ./nginx/
+      dockerfile: Dockerfile
+      network: host
     ports:
       - "80:80"
     environment:

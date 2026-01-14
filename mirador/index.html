@@ -6,13 +6,27 @@
     <style>#demo { width: 100%; height: 100vh; position: relative; }</style>
 </head>
 <body>
-    <div id="demo"></div>
+    <div id="viewer"></div>
     <script src="https://unpkg.com/mirador@latest/dist/mirador.min.js"></script>
 
     <script>
-      var miradorInstance = Mirador.viewer({
-        id: "viewer", // Doit correspondre à l'ID du div ci-dessus
-        
+	// rien a changer pour cette partie, tu continues a faire comme avant
+	const urlParams = new URLSearchParams(window.location.search);
+        const resourceId = urlParams.get('id');
+	
+
+        const parts = resourceId.split('_');
+        const rootid= parts[0];
+	const collec= `${parts[0]}_${parts[1]}_${parts[2]}`;
+
+	const timestamp = Date.now(); 
+	const manifestUrl = `/data/json/${rootid}/${collec}/${resourceId}/${resourceId}.json?nocache=${timestamp}`;
+
+	console.log(manifestUrl);
+    </script>
+
+    <script>
+      var miradorInstance = Mirador.viewer(
 	{
         id: "viewer",
         windows: [
@@ -24,7 +38,7 @@
 		// mirador pour qu'il utilise le service d'authentification
 		// et de verification du token
 		// ======================================================
-                manifestId: 'http://localhost/mirador_manifest.json',
+                manifestId: manifestUrl,
                 maximized: false,
                 imageToolsEnabled: true,
                 imageToolsOpen: false,
