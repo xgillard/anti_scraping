@@ -1,0 +1,42 @@
+services:
+  # Par facilité, j'ai dit que ngnix servait à la fois de reverse proxy
+  # et pour servir des pages statiques (ici: uniquement 1 page mirador)
+  #
+  # ## Note ##
+  # On utilise ici openresty pour avoir une bonne intégration entre ngnix et lua.
+  # C'est pour cette raison que j'ai utilisé une image openresty/openresty
+  # plutot qu'une image ngnix/ngnix lors de la construction du docker.
+  nginx:
+    # On garde le build pour installer la lib JWT, 
+    # mais l'image ne contiendra plus la config en dur.
+    build: ./nginx/
+    ports:
+      - "80:80"
+    environment:
+      # utilisé pour chiffrer / déchiffrer les informations d'authentification
+      - JWT_SECRET=PleaseBeKindAndStopScr4p1ng!
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      # la configuration nginx
+      - ./nginx/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      # le code lua qu'on utilise pour traiter l'intercept de toutes les 
+      # requetes iif qui sont envoyées vers le server
+      - ./nginx/lua:/usr/local/openresty/nginx/lua:ro
+      # le frontend qui sert juste un petit mirador
+      - ./mirador:/usr/local/openresty/nginx/html:ro
+    depends_on:
+      - redis
+  # Redis est un cache in mem qui est utilisé pour compter rapidement le 
+  # nombre d'images (pas les tuiles, les images) qu'un compte utilisateur
+  # a téléchargé. Ce cache va etre peuplé par un petit bout de code lua qui
+  # sera directement exécuté par ngnix lorsqu'on fait une requete sur le 
+  # chemin /iiif/. 
+  redis:
+    image: redis:alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:

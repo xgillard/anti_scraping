@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Mirador Viewer Secure</title>
+    <style>#demo { width: 100%; height: 100vh; position: relative; }</style>
+</head>
+<body>
+    <div id="demo"></div>
+    <script src="https://unpkg.com/mirador@latest/dist/mirador.min.js"></script>
+
+    <script>
+      var miradorInstance = Mirador.viewer({
+        id: "viewer", // Doit correspondre à l'ID du div ci-dessus
+        
+	{
+        id: "viewer",
+        windows: [
+            {
+                id: 'AGR_viewer',
+		// ======================================================
+                // C'est le seul truc qui change: on va utiliser un 
+		// manifeste servi par le server afin de configurer 
+		// mirador pour qu'il utilise le service d'authentification
+		// et de verification du token
+		// ======================================================
+                manifestId: 'http://localhost/mirador_manifest.json',
+                maximized: false,
+                imageToolsEnabled: true,
+                imageToolsOpen: false,
+                textOverlay: {
+                    enabled: true,
+                    selectable: true,
+                    visible: true
+                },
+            }
+        ],
+       
+        window: {
+            allowClose: false,
+            allowFullscreen: true,
+            allowMaximize: false,
+            allowTopMenuButton: true,
+            allowWindowSideBar: true,
+            sideBarPanel: 'canvas',
+            defaultView: 'single',
+            hideWindowTitle: false,
+            showLocalePicker: true,
+            sideBarOpen: true,
+            panels: {
+                info: true,
+                attribution: true,
+                canvas: true,
+                annotations: false,
+                search: false,
+                layers: false,
+            },
+            views: [
+               { key: 'single', behaviors: ['individuals'] }
+           ]
+        },
+       
+        thumbnailNavigation: {
+            defaultPosition: 'far-bottom',
+            displaySettings: true
+        },
+       
+        workspace: {
+            allowNewWindows: false,
+            isWorkspaceAddVisible: false,
+            showZoomControls: true,
+            type: 'mosaic'
+        },
+       
+        workspaceControlPanel: {
+            enabled: true
+        },
+ 
+        osdConfig: {
+            alwaysBlend: false,
+            blendTime: 0.1,
+            preserveImageSizeOnResize: true,
+            sequenceMode: true,
+            preserveViewport: true,
+            showNavigationControl: false,
+            showSequenceControl: false,
+            maxZoomLevel: 0.1
+        }
+    });
+    </script>
+</body>
+</html>
